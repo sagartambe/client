@@ -32,6 +32,15 @@ code {
   width: 40%;
 }
 
+.width20 {
+  width: 20%;
+}
+
+.error {
+  color: rgb(218, 22, 61);
+  margin: 10px 0;
+}
+
 .formStyle  {
   margin: 5% 25%;
   padding: 20px;

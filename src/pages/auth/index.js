@@ -10,7 +10,7 @@ const Auth = () => {
   const history = useHistory();
 
   if (!queries.access_token && !getItem('access_token')) {
-    window.location.assign('https://myoauthpune.auth.us-east-1.amazoncognito.com/login?client_id=5f8htobi0sf0aaggpf54223i0i&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+phone+profile&redirect_uri=http://localhost:3001/auth');
+    window.location.assign('https://myoauthpune.auth.us-east-1.amazoncognito.com/login?client_id=5f8htobi0sf0aaggpf54223i0i&response_type=token&scope=aws.cognito.signin.user.admin+email+openid+phone+profile&redirect_uri=http://localhost:3000/auth');
   }
   else if (getItem('access_token')){
     history.push('/app/organizations');

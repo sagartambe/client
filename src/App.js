@@ -10,6 +10,7 @@ function App() {
       <Switch>
         <Route exact path="/auth" component={Auth} />
         <Route path="/app/*" component={Private} />
+        <Route path="/" component={Auth} />
       </Switch>
     </BrowserRouter>
   );

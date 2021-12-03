@@ -3,24 +3,19 @@ import { Label, Table, Pagination, Button, Confirm } from 'semantic-ui-react';
 import { Link, useHistory, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { API, fetcher, poster } from '../../constants';
+import { fetcher, poster } from '../../utils/api';
 
 const Property = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [deleteProp, setDeleteProperty] = useState(0);
-  const { data, error } = useSWR(`${API}/property?limit=${limit}&page=${page}`, fetcher);
+  const { data, error } = useSWR(`property?limit=${limit}&page=${page}`, fetcher);
   const [successMessage, setSuccess] = useState("");
   const [errorMessage, setError] = useState("");
   const [openConfirmation, setOpenConfirmation] = useState(false);
 
   const deleteProperty = () => {
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({id: deleteProp})
-    };
-    poster(`${API}/property/delete`, requestOptions)
+    poster(`property/delete`, {id: deleteProp})
       .then((data) => {
         setOpenConfirmation(false);
         setDeleteProperty(0);
@@ -110,18 +105,13 @@ const Property = () => {
 
 const PropertyAdd = () => {
 
-  const { data } = useSWR(`${API}/organization`, fetcher);
+  const { data } = useSWR(`organization`, fetcher);
   const { register, handleSubmit } = useForm();
   const [error, setError] = useState("");
   const history = useHistory();
 
   const onSubmit = (data) => {
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    };
-    poster(`${API}/property/create`, requestOptions)
+    poster(`property/create`, data)
       .then((data) => {
         if (data.error_message) {
           setError(data.error_message);
@@ -152,7 +142,7 @@ const PropertyAdd = () => {
 }
 
 const PropertyEdit = () => {
-  const { data } = useSWR(`${API}/organization`, fetcher);
+  const { data } = useSWR(`organization`, fetcher);
   const { register, handleSubmit, setValue } = useForm();
   const [name, setName] = useState("");
   const [organizationId, setOrganizationId] = useState("");
@@ -163,12 +153,7 @@ const PropertyEdit = () => {
   const onSubmit = (data) => {
     data.id = id;
     setName(data.name);
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    };
-    poster(`${API}/property/update`, requestOptions)
+    poster(`property/update`, data)
       .then((data) => {
         if (data.error_message) {
           setError(data.error_message);
@@ -180,7 +165,7 @@ const PropertyEdit = () => {
   };
 
   useEffect(() => {
-    fetcher(`${API}/property?id=${id}`)
+    fetcher(`property?id=${id}`)
     .then((data) => {
       setName(data.rows[0].name);
       setOrganizationId(data.rows[0].Organization.id)

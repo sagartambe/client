@@ -3,24 +3,19 @@ import { Label, Table, Pagination, Button, Confirm } from 'semantic-ui-react';
 import { Link, useHistory, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { API, fetcher, poster } from '../../constants';
+import { fetcher, poster } from '../../utils/api';
 
 const Crop = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [deleteCrop, setDeleteCrop] = useState(0);
-  const { data, error } = useSWR(`${API}/crop?limit=${limit}&page=${page}`, fetcher);
+  const { data, error } = useSWR(`crop?limit=${limit}&page=${page}`, fetcher);
   const [successMessage, setSuccess] = useState("");
   const [errorMessage, setError] = useState("");
   const [openConfirmation, setOpenConfirmation] = useState(false);
 
   const deleteCropConfirm = () => {
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({id: deleteCrop})
-    };
-    poster(`${API}/crop/delete`, requestOptions)
+    poster(`crop/delete`, {id: deleteCrop})
       .then((data) => {
         setOpenConfirmation(false);
         setDeleteCrop(0);
@@ -113,12 +108,7 @@ const CropAdd = () => {
   const history = useHistory();
 
   const onSubmit = (data) => {
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    };
-    poster(`${API}/crop/create`, requestOptions)
+    poster(`crop/create`, data)
       .then((data) => {
         if (data.error_message) {
           setError(data.error_message);
@@ -152,12 +142,7 @@ const CropEdit = () => {
   const onSubmit = (data) => {
     data.id = id;
     setName(data.name);
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    };
-    poster(`${API}/crop/update`, requestOptions)
+    poster(`crop/update`, data)
       .then((data) => {
         if (data.error_message) {
           setError(data.error_message);
@@ -169,7 +154,7 @@ const CropEdit = () => {
   };
 
   useEffect(() => {
-    fetcher(`${API}/crop?id=${id}`)
+    fetcher(`crop?id=${id}`)
     .then((data) => {
       setName(data.rows[0].name);
     })

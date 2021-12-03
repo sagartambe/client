@@ -3,24 +3,19 @@ import { Label, Table, Pagination, Button, Confirm } from 'semantic-ui-react';
 import { Link, useHistory, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { API, fetcher, poster } from '../../constants';
+import { fetcher, poster } from '../../utils/api';
 
 const CropCycleField = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [deleteCropCycleField, setDeleteCropCycleField] = useState(0);
-  const { data, error } = useSWR(`${API}/cropcyclefield?limit=${limit}&page=${page}`, fetcher);
+  const { data, error } = useSWR(`cropcyclefield?limit=${limit}&page=${page}`, fetcher);
   const [successMessage, setSuccess] = useState("");
   const [errorMessage, setError] = useState("");
   const [openConfirmation, setOpenConfirmation] = useState(false);
 
   const deleteCropCycleFieldConfirm = () => {
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({id: deleteCropCycleField})
-    };
-    poster(`${API}/cropcyclefield/delete`, requestOptions)
+    poster(`cropcyclefield/delete`, {id: deleteCropCycleField})
       .then((data) => {
         setOpenConfirmation(false);
         setDeleteCropCycleField(0);
@@ -111,19 +106,14 @@ const CropCycleField = () => {
 };
 
 const CropCycleFieldAdd = () => {
-  const { data: cropCycleData, error: cropCycleError } = useSWR(`${API}/cropcycle`, fetcher);
-  const { data: fieldData, error: fieldError } = useSWR(`${API}/field`, fetcher);
+  const { data: cropCycleData, error: cropCycleError } = useSWR(`cropcycle`, fetcher);
+  const { data: fieldData, error: fieldError } = useSWR(`field`, fetcher);
   const { register, handleSubmit } = useForm();
   const [error, setError] = useState("");
   const history = useHistory();
 
   const onSubmit = (data) => {
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    };
-    poster(`${API}/cropcyclefield/create`, requestOptions)
+    poster(`cropcyclefield/create`, data)
       .then((data) => {
         if (data.error_message) {
           setError(data.error_message);
@@ -160,8 +150,8 @@ const CropCycleFieldAdd = () => {
 }
 
 const CropCycleFieldEdit = () => {
-  const { data: cropCycleData, error: cropCycleError } = useSWR(`${API}/cropcycle`, fetcher);
-  const { data: fieldData, error: fieldError } = useSWR(`${API}/field`, fetcher);
+  const { data: cropCycleData, error: cropCycleError } = useSWR(`cropcycle`, fetcher);
+  const { data: fieldData, error: fieldError } = useSWR(`field`, fetcher);
   const { register, handleSubmit, setValue } = useForm();
   const [name, setName] = useState("");
   const [cropcycle, setCropCycle] = useState("");
@@ -175,12 +165,7 @@ const CropCycleFieldEdit = () => {
     setName(data.name);
     setCropCycle(data.cropcycle_id);
     setField(data.field_id);
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    };
-    poster(`${API}/cropcyclefield/update`, requestOptions)
+    poster(`cropcyclefield/update`, data)
       .then((data) => {
         if (data.error_message) {
           setError(data.error_message);
@@ -192,7 +177,7 @@ const CropCycleFieldEdit = () => {
   };
 
   useEffect(() => {
-    fetcher(`${API}/cropcyclefield?id=${id}`)
+    fetcher(`cropcyclefield?id=${id}`)
     .then((data) => {
       setName(data.rows[0].name);
       setCropCycle(data.rows[0].cropCycleId);

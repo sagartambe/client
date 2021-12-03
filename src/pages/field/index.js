@@ -3,24 +3,19 @@ import { Label, Table, Pagination, Button, Confirm } from 'semantic-ui-react';
 import { Link, useHistory, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { API, fetcher, poster } from '../../constants';
+import { fetcher, poster } from '../../utils/api';
 
 const Field = () => {
   const [page, setPage] = useState(1);
   const [limit, setLimit] = useState(10);
   const [deleteField, setDeleteField] = useState(0);
-  const { data, error } = useSWR(`${API}/field?limit=${limit}&page=${page}`, fetcher);
+  const { data, error } = useSWR(`field?limit=${limit}&page=${page}`, fetcher);
   const [successMessage, setSuccess] = useState("");
   const [errorMessage, setError] = useState("");
   const [openConfirmation, setOpenConfirmation] = useState(false);
 
   const deleteFieldConfirm = () => {
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({id: deleteField})
-    };
-    poster(`${API}/field/delete`, requestOptions)
+    poster(`field/delete`, {id: deleteField})
       .then((data) => {
         setOpenConfirmation(false);
         setDeleteField(0);
@@ -111,18 +106,13 @@ const Field = () => {
 };
 
 const FieldAdd = () => {
-  const { data } = useSWR(`${API}/region`, fetcher);
+  const { data } = useSWR(`region`, fetcher);
   const { register, handleSubmit } = useForm();
   const [error, setError] = useState("");
   const history = useHistory();
 
   const onSubmit = (data) => {
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    };
-    poster(`${API}/field/create`, requestOptions)
+    poster(`field/create`, data)
       .then((data) => {
         if (data.error_message) {
           setError(data.error_message);
@@ -154,7 +144,7 @@ const FieldAdd = () => {
 }
 
 const FieldEdit = () => {
-  const { data } = useSWR(`${API}/region`, fetcher);
+  const { data } = useSWR(`region`, fetcher);
   const { register, handleSubmit, setValue } = useForm();
   const [name, setName] = useState("");
   const [specification, setSpecification] = useState("");
@@ -168,12 +158,7 @@ const FieldEdit = () => {
     setName(data.name);
     setSpecification(data.specification);
     setRegionId(data.region_id);
-    const requestOptions = {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data)
-    };
-    poster(`${API}/field/update`, requestOptions)
+    poster(`field/update`, data)
       .then((data) => {
         if (data.error_message) {
           setError(data.error_message);
@@ -185,7 +170,7 @@ const FieldEdit = () => {
   };
 
   useEffect(() => {
-    fetcher(`${API}/field?id=${id}`)
+    fetcher(`field?id=${id}`)
     .then((data) => {
       setName(data.rows[0].name);
       setSpecification(data.rows[0].specification);

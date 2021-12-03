@@ -56,31 +56,7 @@ const Organisation = () => {
             <Table.HeaderCell>Actions</Table.HeaderCell>
           </Table.Row>
         </Table.Header>
-        <Table.Body>
-          {error && (
-            <Table.Row>
-              <Table.Cell colSpan={2}>
-                <Label>Error loading data...</Label>
-              </Table.Cell>
-            </Table.Row>
-          )}
-          {!data && !error && (
-            <Table.Row>
-              <Table.Cell colSpan={2}>
-                <Label>Loading...</Label>
-              </Table.Cell>
-            </Table.Row>
-          )}
-          {data && data.rows.map((record, i) => (
-            <Table.Row key={i}>
-              <Table.Cell className="width60">{record.name}</Table.Cell>
-              <Table.Cell>
-                <Button as={Link} to={`/app/organizations/edit/${record.id}`}>Edit</Button>
-                <Button onClick={() => processDeleteOrganization(record.id)}>Delete</Button>
-              </Table.Cell>
-            </Table.Row>
-          ))}
-        </Table.Body>
+          <OrganizationList data={data} error={error} processDeleteOrganization={processDeleteOrganization}  />
         <Table.Footer>
           <Table.Row textAlign="right">
             <Table.HeaderCell colSpan='2'>
@@ -99,6 +75,36 @@ const Organisation = () => {
         </Table.Footer>
       </Table>
     </div>
+  );
+};
+
+const OrganizationList = ({ data, error, processDeleteOrganization }) => {
+  return (
+    <Table.Body>
+      {error && (
+        <Table.Row>
+          <Table.Cell colSpan={2}>
+            <Label>Error loading data...</Label>
+          </Table.Cell>
+        </Table.Row>
+      )}
+      {!data && !error && (
+        <Table.Row>
+          <Table.Cell colSpan={2}>
+            <Label>Loading...</Label>
+          </Table.Cell>
+        </Table.Row>
+      )}
+      {data && data.rows.map((record, i) => (
+        <Table.Row key={i}>
+          <Table.Cell className="width60">{record.name}</Table.Cell>
+          <Table.Cell>
+            <Button as={Link} to={`/app/organizations/edit/${record.id}`}>Edit</Button>
+            <Button onClick={() => processDeleteOrganization(record.id)}>Delete</Button>
+          </Table.Cell>
+        </Table.Row>
+      ))}
+    </Table.Body>
   );
 };
 
@@ -176,4 +182,4 @@ const OrganisationEdit = () => {
   );
 }
 
-export { Organisation, OrganisationAdd, OrganisationEdit }
+export { Organisation, OrganisationAdd, OrganisationEdit, OrganizationList }
